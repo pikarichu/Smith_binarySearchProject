@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <chrono>
 
 using namespace std;
 
@@ -27,8 +28,7 @@ int recursiveBinarySearch(const std::vector<int>& arr, int target, int low, int 
 
 int iterativeBinarySearch(const std::vector<int>& arr, int target) {
     int low = 0;
-    //int high = arr.size() - 1;
-    int high = 10;
+    int high = arr.size() - 1;
     while (low <= high) {
         int mid = low + (high - low) / 2;
 
@@ -60,65 +60,87 @@ int sequentialSearch(const std::vector<int>& arr, int target) {
 
 int main() {
     
+    int N = 200000;
+    double sumRBS = 0;
+    double sumIBS = 0;
+    double sumSeqS = 0;
+    int target;
+    auto start_time = chrono::high_resolution_clock::now();
+    auto end_time = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
+    int result;
+
     vector<int> arr = { };
     mt19937 rng(std::random_device{}());
     uniform_int_distribution<int> distribution(1, 100);
-    //arr.begin();
-    for (int i = 0; i < 10; ++i) {
-    
-        int random_number = distribution(rng);
-        arr.insert(arr.begin(), random_number);
-    }
-    //std::vector<int> arr = { 6, 5, 7, 8, 1, 3, 4, 2, 9, 10 };
-    sort(arr.begin(), arr.end());
-
-    int target = 6;
     for (int i = 0; i < 10; ++i)
     {
-        cout << arr[i] << ", ";
-    }
-    cout << endl;
-
-    int result = recursiveBinarySearch(arr, target, 0, arr.size() - 1);
-
-    if (result != -1) {
-        std::cout << target << "Element found at index: " << result << std::endl;
-    }
-    else {
-        std::cout << target << "Element not found in the array." << std::endl;
-
-    }
-    
-    /*for (int i = 0; i < 100; ++i)
-    {
-        int result = recursiveBinarySearch(arr, i, 0, arr.size() - 1);
+        arr = { };
+        for (int j = 0; j < N; ++j) 
+        {
+            int random_number = distribution(rng);
+            arr.insert(arr.begin(), random_number);
+        }
+        sort(arr.begin(), arr.end());
+        target = distribution(rng);
+        start_time = chrono::high_resolution_clock::now();
+        result = recursiveBinarySearch(arr, target, 0, arr.size() - 1);
 
         if (result != -1) {
-            std::cout << i << ": Element found at index: " << result << std::endl;
+            std::cout << target << " Element found at index: " << result << std::endl;
+
         }
         else {
-            std::cout << i << ": Element not found in the array." << std::endl;
+            std::cout << target << "Element not found in the array." << std::endl;
 
         }
-    }*/
+        end_time = chrono::high_resolution_clock::now();
+        duration = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
+        sumRBS += duration;
+        cout << "Execution Time: " << duration << " microseconds" << endl;
+        cout << endl;
 
-    result = iterativeBinarySearch(arr, target);
+        start_time = chrono::high_resolution_clock::now();
+        result = iterativeBinarySearch(arr, target);
 
-    if (result != -1) {
-        std::cout << target << "Element found at index: " << result << std::endl;
-    }
-    else {
-        std::cout << target << "Element not found in the array." << std::endl;
-    }
+        if (result != -1) {
+            std::cout << target << " Element found at index: " << result << std::endl;
+        }
+        else {
+            std::cout << target << "Element not found in the array." << std::endl;
+        }
+        end_time = chrono::high_resolution_clock::now();
+        duration = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
+        sumIBS += duration;
+        cout << "Execution Time: " << duration << " microseconds" << endl;
+        cout << endl;
 
-    result = sequentialSearch(arr, target);
 
-    if (result != -1) {
-        std::cout << target << "Element found at index: " << result << std::endl;
+        start_time = chrono::high_resolution_clock::now();
+        result = sequentialSearch(arr, target);
+
+        if (result != -1) {
+            std::cout << target << " Element found at index: " << result << std::endl;
+        }
+        else {
+            std::cout << target << "Element not found in the array." << std::endl;
+        }
+        end_time = chrono::high_resolution_clock::now();
+        duration = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
+        sumSeqS += duration;
+        cout << "Execution Time: " << duration << " microseconds" << endl;
+
+        cout << endl;
+
+
+
     }
-    else {
-        std::cout << target << "Element not found in the array." << std::endl;
-    }
+    cout << "Sum RBS: " << sumRBS << endl;
+    cout << "Sum IBS: " << sumIBS << endl;
+    cout << "Sum SeqS: " << sumSeqS << endl;
+    cout << "Average Running Time for Recursive Binary Search in microseconds is " << sumRBS / 10 << endl;
+    cout << "Average Running Time for Iterative Binary Search in microseconds is " << sumIBS / 10 << endl;
+    cout << "Average Running Time for Sequential Seach in microseconds is " << sumSeqS / 10 << endl;
 
     return 0;
 }
